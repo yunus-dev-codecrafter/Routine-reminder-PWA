@@ -9,6 +9,13 @@ const cron = require('node-cron');
 const webpush = require('web-push');
 const store = require('./data/store');
 
+// Configure web-push with VAPID keys
+webpush.setVapidDetails(
+  process.env.VAPID_SUBJECT,
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -40,6 +47,13 @@ app.get('/api/status', (req, res) => {
     status: 'online',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
+  });
+});
+
+// VAPID public key endpoint for clients
+app.get('/api/vapid-public-key', (req, res) => {
+  res.json({
+    publicKey: process.env.VAPID_PUBLIC_KEY
   });
 });
 
